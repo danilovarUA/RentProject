@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTableWidget
+from PyQt5.QtWidgets import QTableWidget, QTableWidgetItem
 from PyQt5 import QtCore
 
 
@@ -48,3 +48,19 @@ class Table(QTableWidget):
 
         if item_click_handler is not None:
             self.itemClicked.connect(item_click_handler)
+
+
+class TableCheckbox(QTableWidgetItem):
+    def __init__(self):
+        super().__init__()
+        self.setFlags(QtCore.Qt.ItemIsEditable |
+                      QtCore.Qt.ItemIsSelectable |
+                      QtCore.Qt.ItemIsEnabled |
+                      QtCore.Qt.ItemIsUserCheckable)
+        self.setCheckState(QtCore.Qt.Unchecked)
+
+    def toggle(self):
+        if self.checkState() == QtCore.Qt.Unchecked:
+            self.setCheckState(QtCore.Qt.Checked)
+        else:
+            self.setCheckState(QtCore.Qt.Unchecked)

@@ -6,7 +6,7 @@ from PyQt5 import QtCore
 
 class TextWidget(QTableWidgetItem):
     def __init__(self, text, center=True, red=False):
-        super().__init__(text)
+        super().__init__(str(text))
         self.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         if center:
             self.setTextAlignment(QtCore.Qt.AlignHCenter)
