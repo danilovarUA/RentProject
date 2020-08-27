@@ -9,6 +9,17 @@ class Database:
         self.cursor = self.connection.cursor()
 
     def add_agreement(self, fields):
+        if not(
+            validate_string(fields["company"]) or
+            validate_string(fields["person"]) or
+            validate_number(fields["recovery_price"]) or
+            validate_date(fields["last_accept_day"]) or
+            validate_number(fields["first_payment"]) or
+            validate_number(fields["last_same_payment"]) or
+            validate_date(fields["start_day"]) or
+            validate_date(fields["end_day"])
+        ):
+            return False
         query = ("INSERT INTO agreements(" +
                  "company, " +
                  "person, " +
@@ -30,6 +41,7 @@ class Database:
                  ")")
         self.cursor.execute(query)
         self.connection.commit()
+        return True
 
     def remove_agreements(self, ids):
         for row_id in ids:
@@ -77,3 +89,19 @@ class Database:
 #                   "start_day": "начало 12ю12ю1212",
 #                   "end_day": "конец 12ю12ю1212"
 # })
+
+def validate_string(value, max_length=1000):
+    return isinstance(value, str) and len(value) <= max_length
+
+
+def validate_number(value):
+    return isinstance(value, str) and value.isnumeric()
+
+
+def validate_date(value):
+    if not isinstance(value, str):
+        return False
+    day, month, year = value.split("/")
+    return (day.isnumeric() and len(day) <= 2
+            and month.isnumeric() and len(month) <= 2
+            and year.isnumeric() and len(year) == 4)
