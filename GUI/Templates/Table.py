@@ -4,32 +4,27 @@ from PyQt5 import QtCore
 
 TABLE_MINIMUM_WIDTH = 25
 
+# Columns is a list of tuples (header, width) if width == 0 MIN_ROW_WIDTH is used instead, if width is None -
+#   it will not be specified
+
 
 class Table(QTableWidget):
-
     def __init__(self,
                  columns,
-                 scrolling_off=False,
-                 sorting_off=False,
+                 scrolling=True,
+                 sorting=True,
                  table_click_handler=None,
                  item_click_handler=None):
-        # Columns is a list of tuples (header, width) if width == 0 MIN_ROW_WIDTH is used instead, if width is None -
-        # it will not be specified
         super().__init__()
-
-        if not sorting_off:
-            self.setSortingEnabled(True)
+        self.setSortingEnabled(sorting)
+        if not scrolling:
+            self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         self.verticalHeader().setMinimumSectionSize(TABLE_MINIMUM_WIDTH)
         self.horizontalHeader().setMinimumSectionSize(TABLE_MINIMUM_WIDTH)
-
         self.setRowCount(0)
         self.setColumnCount(len(columns))
-
         self.move(0, 0)
-
-        if scrolling_off:
-            self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         headers = [column[0] for column in columns]
         self.setHorizontalHeaderLabels(headers)
@@ -51,16 +46,18 @@ class Table(QTableWidget):
 
 
 class TableCheckbox(QTableWidgetItem):
-    def __init__(self):
+    def __init__(self, row_id):
         super().__init__()
         self.setFlags(QtCore.Qt.ItemIsEditable |
                       QtCore.Qt.ItemIsSelectable |
                       QtCore.Qt.ItemIsEnabled |
                       QtCore.Qt.ItemIsUserCheckable)
         self.setCheckState(QtCore.Qt.Unchecked)
+        self.row_id = row_id
 
     def toggle(self):
         if self.checkState() == QtCore.Qt.Unchecked:
             self.setCheckState(QtCore.Qt.Checked)
         else:
             self.setCheckState(QtCore.Qt.Unchecked)
+

@@ -32,8 +32,10 @@ class Database:
         self.connection.commit()
 
     def remove_agreements(self, ids):
+        for row_id in ids:
+            self.cursor.execute("DELETE FROM agreements WHERE id={};".format(row_id))
+        print("database removed agreement")
         self.connection.commit()
-        raise ValueError("Function not finished")
 
     def change_agreement(self, agreement_id, fields):
         self.connection.commit()

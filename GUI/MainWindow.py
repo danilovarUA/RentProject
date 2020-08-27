@@ -1,7 +1,9 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
+from PyQt5.QtCore import Qt
 from GUI.Templates.Button import Button
 from GUI.Templates.Table import Table, TableCheckbox
 from GUI.Templates.TextWidget import TextWidget
+from GUI.Templates.Popup import Popup
 from GUI import Text
 from GUI.AddAgreementWindow import AddAgreementsWidget
 
@@ -15,6 +17,8 @@ class MainWidget(QWidget):
         super().__init__()
         self.app = app
         self.database = database
+        self.add_contract_window = None
+        self.table = None
 
         self.setWindowTitle(Text.agreements_window_name)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
@@ -41,7 +45,9 @@ class MainWidget(QWidget):
         add_contract_button.clicked.connect(self.add_contract_clicked)
         self.buttons_layout.addWidget(add_contract_button, 0, 0)
 
-        self.buttons_layout.addWidget(Button(Text.agreements_remove_contracts_button), 1, 0)
+        remove_contracts_button = Button(Text.agreements_remove_contracts_button)
+        remove_contracts_button.clicked.connect(self.remove_contracts_clicked)
+        self.buttons_layout.addWidget(remove_contracts_button, 1, 0)
 
         self.buttons_layout.addWidget(Button(Text.agreements_produce_contracts_button), 0, 1)
 
@@ -61,7 +67,7 @@ class MainWidget(QWidget):
         for row_index in range(len(rows)):
             row = rows[row_index]
             self.table.setRowHeight(row_index, TABLE_ROW_HEIGHT)
-            checkbox = TableCheckbox()
+            checkbox = TableCheckbox(row[0])
             self.table.setItem(row_index, 0, checkbox)
             self.table.setItem(row_index, 1, TextWidget(row[1]))
             self.table.setItem(row_index, 2, TextWidget(row[2]))
@@ -75,5 +81,14 @@ class MainWidget(QWidget):
         print(item)
 
     def add_contract_clicked(self):
-        print("Clicked add contract button")
         self.add_contract_window = AddAgreementsWidget(self.app, self.database)
+
+    def remove_contracts_clicked(self):
+        agreements_to_delete = []
+        for index in range(self.table.rowCount()):
+            if self.table.item(index, 0).checkState() == Qt.Checked:
+                agreements_to_delete.append(self.table.item(index, 0).row_id)
+        if len(agreements_to_delete) == 0:
+            Popup("No selected contracts to delete.", "Error")
+        self.database.remove_agreements(agreements_to_delete)
+        self.fill_in_table()
