@@ -81,7 +81,7 @@ class MainWidget(QWidget):
         print(item)
 
     def add_contract_clicked(self):
-        self.add_contract_window = AddAgreementsWidget(self.app, self.database)
+        self.add_contract_window = AddAgreementsWidget(self.app, self.database, self)
 
     def remove_contracts_clicked(self):
         agreements_to_delete = []

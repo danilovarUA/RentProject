@@ -39,6 +39,7 @@ class Database:
                  "'{}', ".format(fields["start_day"]) +
                  "'{}' ".format(fields["end_day"]) +
                  ")")
+        print(query)
         self.cursor.execute(query)
         self.connection.commit()
         return True

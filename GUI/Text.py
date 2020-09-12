@@ -20,6 +20,8 @@ add_agreement_last_accept_day = "Последний день приема соб
 add_agreement_first_payment = "Платеж за первый месяц"
 add_agreement_last_month_payment = "последний месяц предоплачен"
 
+add_property_window_name = add_agreement_add_property_button
+
 agreements_table_fields = [("", 0),
                            (add_agreement_company_label, 300),
                            (add_agreement_person_label, 200),
