@@ -20,7 +20,11 @@ add_agreement_last_accept_day = "Последний день приема соб
 add_agreement_first_payment = "Платеж за первый месяц"
 add_agreement_last_month_payment = "последний месяц предоплачен"
 
-add_propert_window_name = add_agreement_add_property_button
+add_property_window_name = add_agreement_add_property_button
+add_property_name_label = "Название"
+add_property_address_label = "Адресс"
+add_property_area_label = "Площадь"
+add_property_given_date_label = "Передан арендатору"
 
 agreements_table_fields = [("", 0),
                            (add_agreement_company_label, 300),
@@ -32,9 +36,9 @@ agreements_table_fields = [("", 0),
                            ("Общая площадь", 100)]
 
 properties_table_fields = [("", 0),
-                           ("Название", 300),
-                           ("Адресс", 200),
-                           ("Площадь", 100),
-                           ("Передан арендатору", 200),
+                           (add_property_name_label, 300),
+                           (add_property_address_label, 200),
+                           (add_property_area_label, 100),
+                           (add_property_given_date_label, 200),
                            ]
 

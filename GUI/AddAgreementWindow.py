@@ -5,6 +5,7 @@ from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
+from GUI.AddProperyWindow import AddPropertyWidget
 from GUI import Text
 
 
@@ -18,6 +19,7 @@ class AddAgreementsWidget(QWidget):
         self.main_window = main_window
         self.app = app
         self.database = database
+        self.add_property_window = None
 
         self.setWindowTitle(Text.add_agreement_window_name)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
@@ -53,6 +55,7 @@ class AddAgreementsWidget(QWidget):
         self.show()
 
     def setup_fields_layout(self):
+        # TODO rewrite with for loop
         self.fields_layout.addWidget(Label(Text.add_agreement_company_label), 0, 0)
         self.fields_layout.addWidget(self.entry_company, 0, 1)
 
@@ -80,11 +83,19 @@ class AddAgreementsWidget(QWidget):
     def setup_properties_table_layout(self):
         self.properties_table_layout.addWidget(Table(Text.properties_table_fields), 0, 0)
 
+    def fill_in_properties_table(self):
+        pass
+
     def setup_properties_table_controls_and_stats_layout(self):
+        add_property_button = Button(Text.add_agreement_add_property_button)
+        add_property_button.clicked.connect(self.add_property_clicked)
         self.properties_table_controls_and_stats_layout.addWidget(
-            Button(Text.add_agreement_add_property_button), 0, 0)
+            add_property_button, 0, 0)
         self.properties_table_controls_and_stats_layout.addWidget(
             Button(Text.add_agreement_remove_properties_button), 0, 1)
+
+    def add_property_clicked(self):
+        self.add_property_window = AddPropertyWidget(self.app, self.database, self)
 
     def setup_page_control_layout(self):
         done_button = Button(Text.add_agreement_add_button)
