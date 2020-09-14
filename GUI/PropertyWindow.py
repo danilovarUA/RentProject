@@ -8,7 +8,7 @@ from GUI.Templates.Popup import Popup
 from GUI import Text
 
 
-SIZE_MODIFIER = 0.75
+SIZE_MODIFIER = 0.4
 
 
 class PropertyWidget(QWidget):
@@ -22,7 +22,7 @@ class PropertyWidget(QWidget):
         self.property_index = property_index
         self.agreement_id = agreements_window.agreement_id
 
-        self.setWindowTitle(Text.add_agreement_window_name)
+        self.setWindowTitle(Text.add_agreement)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
 
@@ -50,19 +50,19 @@ class PropertyWidget(QWidget):
 
     def setup_fields_layout(self):
         index = 0
-        for row in [(Text.add_property_name_label, self.entry_name),
-                    (Text.add_property_address_label, self.entry_address),
-                    (Text.add_property_area_label, self.entry_area),
-                    (Text.add_property_given_date_label, self.entry_given_day),]:
+        for row in [(Text.name, self.entry_name),
+                    (Text.address, self.entry_address),
+                    (Text.area, self.entry_area),
+                    (Text.given_day, self.entry_given_day), ]:
             self.fields_layout.addWidget(Label(row[0]), index, 0)
             self.fields_layout.addWidget(row[1], index, 1)
             index += 1
 
     def setup_page_control_layout(self):
-        done_button = Button(Text.add_agreement_add_button)
+        done_button = Button(Text.save)
         done_button.clicked.connect(self.done_clicked)
         self.page_control_layout.addWidget(done_button, 0, 0)
-        self.page_control_layout.addWidget(Button(Text.add_agreement_cancel_button), 0, 1)
+        self.page_control_layout.addWidget(Button(Text.cancel), 0, 1)
 
     def done_clicked(self):
         data = {"name": self.entry_name.text(),

@@ -10,7 +10,7 @@ from GUI.PropertyWindow import PropertyWidget
 from GUI import Text
 
 
-SIZE_MODIFIER = 0.85
+SIZE_MODIFIER = 0.7
 
 
 class AgreementWidget(QWidget):
@@ -24,7 +24,7 @@ class AgreementWidget(QWidget):
 
         self.agreement_id = agreement_id
 
-        self.setWindowTitle(Text.add_agreement_window_name)
+        self.setWindowTitle(Text.add_agreement)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
 
@@ -42,7 +42,7 @@ class AgreementWidget(QWidget):
         self.entry_last_month = LineEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
-        self.properties_table = Table(Text.properties_table_fields,
+        self.properties_table = Table(Text.properties_table,
                                       table_doubleclick_handler=self.property_select_handler)
 
         self.main_layout.addLayout(self.fields_layout, 0, 0)
@@ -64,14 +64,14 @@ class AgreementWidget(QWidget):
 
     def setup_fields_layout(self):
         index = 0
-        for row in [(Text.add_agreement_company_label, self.entry_company),
-                    (Text.add_agreement_person_label, self.entry_person),
-                    (Text.add_agreement_recovery_label, self.entry_recovery),
-                    (Text.add_agreement_last_accept_day, self.entry_last_accept_day),
-                    (Text.add_agreement_first_payment, self.entry_first_month),
-                    (Text.add_agreement_last_month_payment, self.entry_last_month),
-                    (Text.add_agreement_start_day_label, self.entry_start_day),
-                    (Text.add_agreement_end_day_label, self.entry_end_day),]:
+        for row in [(Text.company, self.entry_company),
+                    (Text.person, self.entry_person),
+                    (Text.recovery, self.entry_recovery),
+                    (Text.last_accept_day, self.entry_last_accept_day),
+                    (Text.first_payment, self.entry_first_month),
+                    (Text.last_payment, self.entry_last_month),
+                    (Text.agreement_start, self.entry_start_day),
+                    (Text.agreement_end, self.entry_end_day), ]:
             self.fields_layout.addWidget(Label(row[0]), index, 0)
             self.fields_layout.addWidget(row[1], index, 1)
             index += 1
@@ -88,12 +88,12 @@ class AgreementWidget(QWidget):
             self.properties_table.add_row(row[0], [row[1], row[2], row[3], row[4]])
 
     def setup_properties_table_controls_and_stats_layout(self):
-        add_property_button = Button(Text.add_agreement_add_property_button)
+        add_property_button = Button(Text.add_property)
         add_property_button.clicked.connect(self.add_property_clicked)
         self.properties_table_controls_and_stats_layout.addWidget(
             add_property_button, 0, 0)
 
-        remove_properties_button = Button(Text.add_agreement_remove_properties_button)
+        remove_properties_button = Button(Text.remove_properties)
         remove_properties_button.clicked.connect(self.remove_properties_clicked)
         self.properties_table_controls_and_stats_layout.addWidget(remove_properties_button, 0, 1)
 
@@ -101,10 +101,10 @@ class AgreementWidget(QWidget):
         self.property_window = PropertyWidget(self.app, self.database, self)
 
     def setup_page_control_layout(self):
-        done_button = Button(Text.add_agreement_add_button)
+        done_button = Button(Text.save)
         done_button.clicked.connect(self.done_clicked)
         self.page_control_layout.addWidget(done_button, 0, 0)
-        close_button = Button(Text.add_agreement_cancel_button)
+        close_button = Button(Text.cancel)
         close_button.clicked.connect(self.close)
         self.page_control_layout.addWidget(close_button, 0, 1)
 
@@ -155,6 +155,6 @@ class AgreementWidget(QWidget):
             if self.properties_table.item(index, 0).checkState() == Qt.Checked:
                 properties_to_delete.append(self.properties_table.item(index, 0).row_id)
         if len(properties_to_delete) == 0:
-            Popup("No selected contracts to delete.", "Error")
+            Popup("No selected properties to delete.", "Error")
         self.database.remove_properties(ids=properties_to_delete)
         self.fill_in_properties_table()

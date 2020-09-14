@@ -61,8 +61,13 @@ class Table(QTableWidget):
     def clean(self):
         self.setRowCount(0)
         self.setColumnCount(len(self.columns))
-        #self.move(0, 0)
 
+    def set_all_checkboxes(self, negative=False):
+        for row_index in range(self.rowCount()):
+            if negative:
+                self.item(row_index, 0).setCheckState(QtCore.Qt.Unchecked)
+            else:
+                self.item(row_index, 0).setCheckState(QtCore.Qt.Checked)
 
 class TableCheckbox(QTableWidgetItem):
     def __init__(self, row_id):
