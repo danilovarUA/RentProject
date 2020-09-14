@@ -50,10 +50,10 @@ class Database:
         return True
 
     def remove_agreements(self, ids):
-        # TODO remove properties attached as well
         for row_id in ids:
             if not self._execute_("DELETE FROM agreements WHERE id={};".format(row_id)):
                 return False
+        self.remove_properties(agreement_ids=ids)
         return True
 
     def get_agreements(self, index=None):
@@ -64,7 +64,6 @@ class Database:
         return self.cursor.fetchall()
 
     def set_property(self, fields, index):
-        # TODO finish
         if not (validate_string(fields["name"]) or validate_string(fields["address"]) or
                 validate_number(fields["area"]) or validate_date(fields["given_day"]) or
                 validate_number(fields["agreement_id"])):
@@ -72,7 +71,7 @@ class Database:
 
         if index == -1:
             query = ("INSERT INTO {}(name, address, area, given_day, agreement_id)".format(PROPERTIES_TABLE_NAME) +
-                     "VALUES ({}, {}, {}, {}, {})".format(
+                     "VALUES ('{}', '{}', '{}', '{}', '{}')".format(
                          fields["name"], fields["address"], fields["area"], fields["given_day"],
                          fields["agreement_id"]))
         else:
@@ -84,9 +83,16 @@ class Database:
 
         return self._execute_(query)
 
-    def remove_properties(self, ids, agreement_ids):
-        # self.connection.commit()
-        raise ValueError("Function not finished")
+    def remove_properties(self, ids=None, agreement_ids=None):
+        if ids is not None:
+            for row_id in ids:
+                if not self._execute_("DELETE FROM properties WHERE id={};".format(row_id)):
+                    return False
+        if agreement_ids is not None:
+            for agreement_id in agreement_ids:
+                if not self._execute_("DELETE FROM properties WHERE agreement_id={};".format(agreement_id)):
+                    return False
+        return True
 
     def get_properties(self, agreement_id=None, index=None):
         if index is not None and agreement_id is None:

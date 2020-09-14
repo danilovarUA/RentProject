@@ -61,7 +61,7 @@ class Table(QTableWidget):
     def clean(self):
         self.setRowCount(0)
         self.setColumnCount(len(self.columns))
-        self.move(0, 0)
+        #self.move(0, 0)
 
 
 class TableCheckbox(QTableWidgetItem):

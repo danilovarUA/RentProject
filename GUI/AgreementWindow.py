@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 from GUI.Templates.Button import Button
 from GUI.Templates.Table import Table
 from GUI.Templates.Label import Label
@@ -92,11 +92,13 @@ class AgreementWidget(QWidget):
         add_property_button.clicked.connect(self.add_property_clicked)
         self.properties_table_controls_and_stats_layout.addWidget(
             add_property_button, 0, 0)
-        self.properties_table_controls_and_stats_layout.addWidget(
-            Button(Text.add_agreement_remove_properties_button), 0, 1)
+
+        remove_properties_button = Button(Text.add_agreement_remove_properties_button)
+        remove_properties_button.clicked.connect(self.remove_properties_clicked)
+        self.properties_table_controls_and_stats_layout.addWidget(remove_properties_button, 0, 1)
 
     def add_property_clicked(self):
-        self.property_window = PropertyWidget(self.app, self.database, self.agreement_id, self)
+        self.property_window = PropertyWidget(self.app, self.database, self)
 
     def setup_page_control_layout(self):
         done_button = Button(Text.add_agreement_add_button)
@@ -147,3 +149,12 @@ class AgreementWidget(QWidget):
     def closeEvent(self, close_event=None):
         self.database.remove_agreements([-1])
 
+    def remove_properties_clicked(self):
+        properties_to_delete = []
+        for index in range(self.properties_table.rowCount()):
+            if self.properties_table.item(index, 0).checkState() == Qt.Checked:
+                properties_to_delete.append(self.properties_table.item(index, 0).row_id)
+        if len(properties_to_delete) == 0:
+            Popup("No selected contracts to delete.", "Error")
+        self.database.remove_properties(ids=properties_to_delete)
+        self.fill_in_properties_table()
