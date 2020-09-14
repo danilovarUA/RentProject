@@ -14,13 +14,13 @@ add_agreement_add_property_button = "Добавить собственность
 add_agreement_remove_properties_button = "Удалить собственности"
 add_agreement_start_day_label = "Начало контракта"
 add_agreement_end_day_label = "Конец контракта"
-add_agreement_add_button = "Добавить котракт"
+add_agreement_add_button = "Сохранить"
 add_agreement_cancel_button = "Вернутся назад"
 add_agreement_last_accept_day = "Последний день приема собственности"
 add_agreement_first_payment = "Платеж за первый месяц"
 add_agreement_last_month_payment = "последний месяц предоплачен"
 
-add_property_window_name = add_agreement_add_property_button
+add_property_window_name = "Добавить котракт"
 add_property_name_label = "Название"
 add_property_address_label = "Адресс"
 add_property_area_label = "Площадь"
