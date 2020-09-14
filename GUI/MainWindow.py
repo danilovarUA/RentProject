@@ -17,7 +17,7 @@ class MainWidget(QWidget):
         super().__init__()
         self.app = app
         self.database = database
-        self.add_contract_window = None
+        self.contract_window = None
         self.table = None
 
         self.setWindowTitle(Text.agreements_window_name)
@@ -58,7 +58,7 @@ class MainWidget(QWidget):
         self.buttons_layout.addWidget(Button(Text.agreements_settings_button), 1, 2)
 
     def setup_table_layout(self):
-        self.table = Table(Text.agreements_table_fields, item_click_handler=self.item_click_handler)
+        self.table = Table(Text.agreements_table_fields, table_doubleclick_handler=self.select_handler)
         self.table_layout.addWidget(self.table)
 
     def fill_in_table(self):
@@ -77,12 +77,12 @@ class MainWidget(QWidget):
             self.table.setItem(row_index, 6, TextWidget(234))
             self.table.setItem(row_index, 7, TextWidget(456))
 
-    def item_click_handler(self, item):
-        print(item)
-        print("That item was selected")
+    def select_handler(self, event):
+        index = self.table.item(event.row(), 0).row_id
+        self.contract_window = AgreementWidget(self.app, self.database, self, agreement_id=index)
 
     def add_contract_clicked(self):
-        self.add_contract_window = AgreementWidget(self.app, self.database, self)
+        self.contract_window = AgreementWidget(self.app, self.database, self)
 
     def remove_contracts_clicked(self):
         agreements_to_delete = []
