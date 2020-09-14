@@ -62,7 +62,15 @@ class AddPropertyWidget(QWidget):
         self.page_control_layout.addWidget(Button(Text.add_agreement_cancel_button), 0, 1)
 
     def done_clicked(self):
-        # TODO record to database here
+        data = {"name": self.entry_name.text(),
+                "address": self.entry_address.text(),
+                "area": self.entry_area.text(),
+                "given_day": self.entry_given_day.text(),
+                "agreement_id": -1,  # -1 is an id for yet non-existent agreement. Once contract is created - all -1 ids
+                # are changed to its id
+             }
+        result = self.database.add_property(data)
+        if not result:
+            Popup("Some fields were not validated", "Error")
         self.agreements_window.fill_in_properties_table()
         self.close()
-        Popup("Done!")

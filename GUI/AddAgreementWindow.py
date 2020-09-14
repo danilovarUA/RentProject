@@ -116,5 +116,8 @@ class AddAgreementsWidget(QWidget):
         result = self.database.add_agreement(data)
         if not result:
             Popup("Some fields were not validated", "Error")
+        else:
+            if not self.database.assign_properties():
+                Popup("Something went wrong when adding properties", "Error")
         self.main_window.fill_in_table()
         self.close()

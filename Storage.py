@@ -41,6 +41,11 @@ class Database:
                  ")")
         return self._execute_(query)
 
+    def assign_properties(self):
+        last_id = self.cursor.lastrowid
+        query = "UPDATE properties SET agreement_id = {} WHERE agreement_id = -1;".format(last_id)
+        return self._execute_(query)
+
     def _execute_(self, query):
         try:
             self.cursor.execute(query)
@@ -118,6 +123,7 @@ def validate_date(value):
     return (day.isnumeric() and len(day) <= 2
             and month.isnumeric() and len(month) <= 2
             and year.isnumeric() and len(year) == 4)
+
 
 if __name__ == "__main__":
     db = Database()
