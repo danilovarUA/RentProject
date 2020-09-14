@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
+from PyQt5.QtCore import QDate
 from GUI.Templates.Button import Button
 from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
@@ -10,13 +11,16 @@ from GUI import Text
 SIZE_MODIFIER = 0.75
 
 
-class AddPropertyWidget(QWidget):
-    def __init__(self, app, database, agreements_window):
+class PropertyWidget(QWidget):
+    def __init__(self, app, database, agreements_window, property_index=-1):
         super().__init__()
 
         self.app = app
         self.database = database
         self.agreements_window = agreements_window
+
+        self.property_index = property_index
+        self.agreement_id = agreements_window.agreement_id
 
         self.setWindowTitle(Text.add_agreement_window_name)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
@@ -38,6 +42,9 @@ class AddPropertyWidget(QWidget):
         self.setup_page_control_layout()
 
         self.setLayout(self.main_layout)
+
+        if self.property_index != -1:
+            self.fill_in_fields()
 
         self.show()
 
@@ -62,11 +69,22 @@ class AddPropertyWidget(QWidget):
                 "address": self.entry_address.text(),
                 "area": self.entry_area.text(),
                 "given_day": self.entry_given_day.text(),
-                "agreement_id": -1,  # -1 is an id for yet non-existent agreement. Once contract is created - all -1 ids
-                # are changed to its id
+                "agreement_id": self.agreement_id
              }
-        result = self.database.add_property(data)
+        result = self.database.set_property(data, self.property_index)
         if not result:
             Popup("Some fields were not validated", "Error")
         self.agreements_window.fill_in_properties_table()
         self.close()
+
+    def fill_in_fields(self):
+        print(self.property_index)
+        rows = self.database.get_properties(index=self.property_index)
+        if len(rows) <= 0:
+            # TODO popup and close window
+            raise ValueError("Something went wrong - there is no property like that")
+        fields = rows[0]
+        self.entry_name.setText(str(fields[1]))
+        self.entry_address.setText(str(fields[2]))
+        self.entry_area.setText(str(fields[3]))
+        self.entry_given_day.setDate(QDate.fromString(fields[4], 'dd-MM-yyyy'))
