@@ -50,6 +50,7 @@ class Database:
         return True
 
     def remove_agreements(self, ids):
+        # TODO remove properties attached as well
         for row_id in ids:
             if not self._execute_("DELETE FROM agreements WHERE id={};".format(row_id)):
                 return False
@@ -88,10 +89,12 @@ class Database:
         raise ValueError("Function not finished")
 
     def get_properties(self, agreement_id=None, index=None):
-        if index is not None:
+        if index is not None and agreement_id is None:
             self._execute_("SELECT * FROM properties WHERE id = {}".format(index))
         elif agreement_id is not None and index is None:
             self._execute_("SELECT * FROM properties WHERE agreement_id = {}".format(agreement_id))
+        elif agreement_id is None and index is None:
+            self._execute_("SELECT * FROM properties")
         else:
             raise ValueError("Both index and agreement_id were passed")
         return self.cursor.fetchall()
@@ -115,24 +118,3 @@ def validate_date(value):
     return (day.isnumeric() and len(day) <= 2 and day in range(0, 32)
             and month.isnumeric() and len(month) <= 2 and month in range(0, 13)
             and year.isnumeric() and len(year) == 4)
-
-
-if __name__ == "__main__":
-    db = Database()
-    # for row in db.get_agreements():
-    #     print(row)
-    # db.add_agreement({"company": "какаятокомпания",
-    #                   "person": "рожа",
-    #                   "recovery_price": "1001234",
-    #                   "last_accept_day": "прием 12ю12ю1212",
-    #                   "first_payment": 1234,
-    #                   "last_same_payment": "1",
-    #                   "start_day": "начало 12ю12ю1212",
-    #                   "end_day": "конец 12ю12ю1212"
-    # })
-    db.set_property({"name": "erkekmvl",
-                     "address": "Uthjtd Rhen 12",
-                     "area": 1001234,
-                     "given_day": "10/10/2010",
-                     "agreement_id": 1234,
-                     })

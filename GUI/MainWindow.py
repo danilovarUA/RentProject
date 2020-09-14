@@ -1,8 +1,7 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
 from PyQt5.QtCore import Qt
 from GUI.Templates.Button import Button
-from GUI.Templates.Table import Table, TableCheckbox
-from GUI.Templates.TextWidget import TextWidget
+from GUI.Templates.Table import Table
 from GUI.Templates.Popup import Popup
 from GUI import Text
 from GUI.AgreementWindow import AgreementWidget
@@ -62,23 +61,15 @@ class MainWidget(QWidget):
         self.table_layout.addWidget(self.table)
 
     def fill_in_table(self):
+        self.table.clean()
         rows = self.database.get_agreements()
-        self.table.setRowCount(len(rows))
         for row_index in range(len(rows)):
             row = rows[row_index]
-            self.table.setRowHeight(row_index, TABLE_ROW_HEIGHT)
-            checkbox = TableCheckbox(row[0])
-            self.table.setItem(row_index, 0, checkbox)
-            self.table.setItem(row_index, 1, TextWidget(row[1]))
-            self.table.setItem(row_index, 2, TextWidget(row[2]))
-            self.table.setItem(row_index, 3, TextWidget(row[4]))
-            self.table.setItem(row_index, 4, TextWidget(row[8]))
-            self.table.setItem(row_index, 5, TextWidget(123))
-            self.table.setItem(row_index, 6, TextWidget(234))
-            self.table.setItem(row_index, 7, TextWidget(456))
+            self.table.add_row(row[0], [row[1], row[2], row[4], row[8], 123, 456, 789])
 
     def select_handler(self, event):
         index = self.table.item(event.row(), 0).row_id
+        print("index ({}), row ({})".format(index, event.row()))
         self.contract_window = AgreementWidget(self.app, self.database, self, agreement_id=index)
 
     def add_contract_clicked(self):

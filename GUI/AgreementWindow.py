@@ -1,17 +1,15 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
 from PyQt5.QtCore import QDate
 from GUI.Templates.Button import Button
-from GUI.Templates.Table import Table, TableCheckbox
+from GUI.Templates.Table import Table
 from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
 from GUI.PropertyWindow import PropertyWidget
-from GUI.Templates.TextWidget import TextWidget
 from GUI import Text
 
 
-TABLE_ROW_HEIGHT = 25
 SIZE_MODIFIER = 0.85
 
 
@@ -83,17 +81,11 @@ class AgreementWidget(QWidget):
         self.fill_in_properties_table()
 
     def fill_in_properties_table(self):
+        self.properties_table.clean()
         rows = self.database.get_properties(agreement_id=self.agreement_id)
-        self.properties_table.setRowCount(len(rows))
         for row_index in range(len(rows)):
             row = rows[row_index]
-            self.properties_table.setRowHeight(row_index, TABLE_ROW_HEIGHT)
-            checkbox = TableCheckbox(row[0])
-            self.properties_table.setItem(row_index, 0, checkbox)
-            self.properties_table.setItem(row_index, 1, TextWidget(row[1]))
-            self.properties_table.setItem(row_index, 2, TextWidget(row[2]))
-            self.properties_table.setItem(row_index, 3, TextWidget(row[3]))
-            self.properties_table.setItem(row_index, 4, TextWidget(row[4]))
+            self.properties_table.add_row(row[0], [row[1], row[2], row[3], row[4]])
 
     def setup_properties_table_controls_and_stats_layout(self):
         add_property_button = Button(Text.add_agreement_add_property_button)
