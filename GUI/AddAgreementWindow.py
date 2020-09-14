@@ -1,14 +1,16 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
 from GUI.Templates.Button import Button
-from GUI.Templates.Table import Table
+from GUI.Templates.Table import Table, TableCheckbox
 from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
 from GUI.AddProperyWindow import AddPropertyWidget
+from GUI.Templates.TextWidget import TextWidget
 from GUI import Text
 
 
+TABLE_ROW_HEIGHT = 25
 SIZE_MODIFIER = 0.85
 
 
@@ -39,6 +41,7 @@ class AddAgreementsWidget(QWidget):
         self.entry_last_month = LineEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
+        self.properties_table = Table(Text.properties_table_fields)
 
         self.main_layout.addLayout(self.fields_layout, 0, 0)
         self.main_layout.addLayout(self.properties_table_layout, 1, 0)
@@ -81,10 +84,20 @@ class AddAgreementsWidget(QWidget):
         self.fields_layout.addWidget(self.entry_end_day, 7, 1)
 
     def setup_properties_table_layout(self):
-        self.properties_table_layout.addWidget(Table(Text.properties_table_fields), 0, 0)
+        self.properties_table_layout.addWidget(self.properties_table, 0, 0)
 
     def fill_in_properties_table(self):
-        pass
+        rows = self.database.get_properties_by_agreement(-1)
+        self.properties_table.setRowCount(len(rows))
+        for row_index in range(len(rows)):
+            row = rows[row_index]
+            self.properties_table.setRowHeight(row_index, TABLE_ROW_HEIGHT)
+            checkbox = TableCheckbox(row[0])
+            self.properties_table.setItem(row_index, 0, checkbox)
+            self.properties_table.setItem(row_index, 1, TextWidget(row[1]))
+            self.properties_table.setItem(row_index, 2, TextWidget(row[2]))
+            self.properties_table.setItem(row_index, 3, TextWidget(row[3]))
+            self.properties_table.setItem(row_index, 4, TextWidget(row[4]))
 
     def setup_properties_table_controls_and_stats_layout(self):
         add_property_button = Button(Text.add_agreement_add_property_button)

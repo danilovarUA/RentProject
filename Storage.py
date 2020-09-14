@@ -102,7 +102,8 @@ class Database:
         raise ValueError("Function not finished")
 
     def get_properties_by_agreement(self, agreement_id):
-        raise ValueError("Function not finished")
+        self._execute_("SELECT * FROM properties WHERE agreement_id = {}".format(agreement_id))
+        return self.cursor.fetchall()
 
     def __del__(self):
         self.connection.close()

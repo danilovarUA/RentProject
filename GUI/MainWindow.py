@@ -79,6 +79,7 @@ class MainWidget(QWidget):
 
     def item_click_handler(self, item):
         print(item)
+        print("That item was selected")
 
     def add_contract_clicked(self):
         self.add_contract_window = AddAgreementsWidget(self.app, self.database, self)
