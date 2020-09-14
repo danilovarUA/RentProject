@@ -42,18 +42,14 @@ class AddPropertyWidget(QWidget):
         self.show()
 
     def setup_fields_layout(self):
-        # TODO rewrite with for loop
-        self.fields_layout.addWidget(Label(Text.add_property_name_label), 0, 0)
-        self.fields_layout.addWidget(self.entry_name, 0, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_property_address_label), 1, 0)
-        self.fields_layout.addWidget(self.entry_address, 1, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_property_area_label), 2, 0)
-        self.fields_layout.addWidget(self.entry_area, 2, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_property_given_date_label), 3, 0)
-        self.fields_layout.addWidget(self.entry_given_day, 3, 1)
+        index = 0
+        for row in [(Text.add_property_name_label, self.entry_name),
+                    (Text.add_property_address_label, self.entry_address),
+                    (Text.add_property_area_label, self.entry_area),
+                    (Text.add_property_given_date_label, self.entry_given_day),]:
+            self.fields_layout.addWidget(Label(row[0]), index, 0)
+            self.fields_layout.addWidget(row[1], index, 1)
+            index += 1
 
     def setup_page_control_layout(self):
         done_button = Button(Text.add_agreement_add_button)

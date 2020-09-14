@@ -14,8 +14,8 @@ TABLE_ROW_HEIGHT = 25
 SIZE_MODIFIER = 0.85
 
 
-class AddAgreementsWidget(QWidget):
-    def __init__(self, app, database, main_window):
+class AgreementWidget(QWidget):
+    def __init__(self, app, database, main_window, agreement_id=None):
         super().__init__()
 
         self.main_window = main_window
@@ -58,30 +58,18 @@ class AddAgreementsWidget(QWidget):
         self.show()
 
     def setup_fields_layout(self):
-        # TODO rewrite with for loop
-        self.fields_layout.addWidget(Label(Text.add_agreement_company_label), 0, 0)
-        self.fields_layout.addWidget(self.entry_company, 0, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_person_label), 1, 0)
-        self.fields_layout.addWidget(self.entry_person, 1, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_recovery_label), 2, 0)
-        self.fields_layout.addWidget(self.entry_recovery, 2, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_last_accept_day), 3, 0)
-        self.fields_layout.addWidget(self.entry_last_accept_day, 3, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_first_payment), 4, 0)
-        self.fields_layout.addWidget(self.entry_fist_month, 4, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_last_month_payment), 5, 0)
-        self.fields_layout.addWidget(self.entry_last_month, 5, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_start_day_label), 6, 0)
-        self.fields_layout.addWidget(self.entry_start_day, 6, 1)
-
-        self.fields_layout.addWidget(Label(Text.add_agreement_end_day_label), 7, 0)
-        self.fields_layout.addWidget(self.entry_end_day, 7, 1)
+        index = 0
+        for row in [(Text.add_agreement_company_label, self.entry_company),
+                    (Text.add_agreement_person_label, self.entry_person),
+                    (Text.add_agreement_recovery_label, self.entry_recovery),
+                    (Text.add_agreement_last_accept_day, self.entry_last_accept_day),
+                    (Text.add_agreement_first_payment, self.entry_fist_month),
+                    (Text.add_agreement_last_month_payment, self.entry_last_month),
+                    (Text.add_agreement_start_day_label, self.entry_start_day),
+                    (Text.add_agreement_end_day_label, self.entry_end_day),]:
+            self.fields_layout.addWidget(Label(row[0]), index, 0)
+            self.fields_layout.addWidget(row[1], index, 1)
+            index += 1
 
     def setup_properties_table_layout(self):
         self.properties_table_layout.addWidget(self.properties_table, 0, 0)

@@ -5,7 +5,7 @@ from GUI.Templates.Table import Table, TableCheckbox
 from GUI.Templates.TextWidget import TextWidget
 from GUI.Templates.Popup import Popup
 from GUI import Text
-from GUI.AddAgreementWindow import AddAgreementsWidget
+from GUI.AgreementWindow import AgreementWidget
 
 
 TABLE_ROW_HEIGHT = 25
@@ -82,7 +82,7 @@ class MainWidget(QWidget):
         print("That item was selected")
 
     def add_contract_clicked(self):
-        self.add_contract_window = AddAgreementsWidget(self.app, self.database, self)
+        self.add_contract_window = AgreementWidget(self.app, self.database, self)
 
     def remove_contracts_clicked(self):
         agreements_to_delete = []
