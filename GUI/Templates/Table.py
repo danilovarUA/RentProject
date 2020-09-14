@@ -14,7 +14,8 @@ class Table(QTableWidget):
                  scrolling=True,
                  sorting=True,
                  table_click_handler=None,
-                 item_click_handler=None):
+                 item_click_handler=None,
+                 table_doubleclick_handler=None):
         super().__init__()
         self.setSortingEnabled(sorting)
         if not scrolling:
@@ -40,6 +41,9 @@ class Table(QTableWidget):
 
         if table_click_handler is not None:
             self.clicked.connect(table_click_handler)
+
+        if table_doubleclick_handler is not None:
+            self.doubleClicked.connect(table_doubleclick_handler)
 
         if item_click_handler is not None:
             self.itemClicked.connect(item_click_handler)
