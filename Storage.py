@@ -76,9 +76,9 @@ class Database:
                          fields["agreement_id"]))
         else:
             query = ("UPDATE {} SET ".format(PROPERTIES_TABLE_NAME) +
-                     "name = {}, address = {}, area = {}, ".format(
-                       fields["company"], fields["person"], fields["recovery_price"]) +
-                     "given_day = {}".format(fields["last_accept_day"]) +
+                     "name = '{}', address = '{}', area = '{}', ".format(
+                       fields["name"], fields["address"], fields["area"]) +
+                     "given_day = '{}' ".format(fields["given_day"]) +
                      "WHERE id={}".format(index))
 
         return self._execute_(query)
@@ -87,8 +87,13 @@ class Database:
         # self.connection.commit()
         raise ValueError("Function not finished")
 
-    def get_properties(self, agreement_id):
-        self._execute_("SELECT * FROM properties WHERE agreement_id = {}".format(agreement_id))
+    def get_properties(self, agreement_id=None, index=None):
+        if index is not None:
+            self._execute_("SELECT * FROM properties WHERE id = {}".format(index))
+        elif agreement_id is not None and index is None:
+            self._execute_("SELECT * FROM properties WHERE agreement_id = {}".format(agreement_id))
+        else:
+            raise ValueError("Both index and agreement_id were passed")
         return self.cursor.fetchall()
 
     def __del__(self):

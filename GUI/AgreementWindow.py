@@ -6,7 +6,7 @@ from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
-from GUI.PropertyWindow import AddPropertyWidget
+from GUI.PropertyWindow import PropertyWidget
 from GUI.Templates.TextWidget import TextWidget
 from GUI import Text
 
@@ -22,7 +22,7 @@ class AgreementWidget(QWidget):
         self.main_window = main_window
         self.app = app
         self.database = database
-        self.add_property_window = None
+        self.property_window = None
 
         self.agreement_id = agreement_id
 
@@ -44,7 +44,8 @@ class AgreementWidget(QWidget):
         self.entry_last_month = LineEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
-        self.properties_table = Table(Text.properties_table_fields)
+        self.properties_table = Table(Text.properties_table_fields,
+                                      table_doubleclick_handler=self.property_select_handler)
 
         self.main_layout.addLayout(self.fields_layout, 0, 0)
         self.main_layout.addLayout(self.properties_table_layout, 1, 0)
@@ -82,7 +83,7 @@ class AgreementWidget(QWidget):
         self.fill_in_properties_table()
 
     def fill_in_properties_table(self):
-        rows = self.database.get_properties(self.agreement_id)
+        rows = self.database.get_properties(agreement_id=self.agreement_id)
         self.properties_table.setRowCount(len(rows))
         for row_index in range(len(rows)):
             row = rows[row_index]
@@ -103,14 +104,14 @@ class AgreementWidget(QWidget):
             Button(Text.add_agreement_remove_properties_button), 0, 1)
 
     def add_property_clicked(self):
-        self.add_property_window = AddPropertyWidget(self.app, self.database, self)
+        self.property_window = PropertyWidget(self.app, self.database, self.agreement_id, self)
 
     def setup_page_control_layout(self):
         done_button = Button(Text.add_agreement_add_button)
         done_button.clicked.connect(self.done_clicked)
         self.page_control_layout.addWidget(done_button, 0, 0)
         close_button = Button(Text.add_agreement_cancel_button)
-        close_button.clicked.connect(self.closeEvent)
+        close_button.clicked.connect(self.close)
         self.page_control_layout.addWidget(close_button, 0, 1)
 
     def done_clicked(self):
@@ -145,6 +146,11 @@ class AgreementWidget(QWidget):
         self.entry_last_month.setText(str(agreement_fields[6]))
         self.entry_start_day.setDate(QDate.fromString(agreement_fields[7], 'dd-MM-yyyy'))
         self.entry_end_day.setDate(QDate.fromString(agreement_fields[8], 'dd-MM-yyyy'))
+
+    def property_select_handler(self, event):
+        index = self.properties_table.item(event.row(), 0).row_id
+        print(event.row())
+        self.property_window = PropertyWidget(self.app, self.database, self, index)
 
     def closeEvent(self, close_event=None):
         self.database.remove_agreements([-1])
