@@ -2,7 +2,7 @@ import sqlite3
 
 DATABASE_NAME = 'rentDatabase.sqlite'
 AGREEMENTS_TABLE_NAME = "agreements"
-PROPERTIES_TABLE_NAME = "properties" # TODO use these only
+PROPERTIES_TABLE_NAME = "properties"  # TODO use these only
 
 
 class Database:
@@ -36,7 +36,7 @@ class Database:
 
     def assign_properties(self):
         last_id = self.cursor.lastrowid
-        query = "UPDATE properties SET agreement_id = {} WHERE agreement_id = -1;".format(last_id)
+        query = "UPDATE {} SET agreement_id = {} WHERE agreement_id = -1;".format(PROPERTIES_TABLE_NAME, last_id)
         return self._execute_(query)
 
     def _execute_(self, query):
@@ -51,7 +51,7 @@ class Database:
 
     def remove_agreements(self, ids):
         for row_id in ids:
-            if not self._execute_("DELETE FROM agreements WHERE id={};".format(row_id)):
+            if not self._execute_("DELETE FROM {} WHERE id={};".format(AGREEMENTS_TABLE_NAME, row_id)):
                 return False
         self.remove_properties(agreement_ids=ids)
         return True
@@ -60,7 +60,7 @@ class Database:
         if index is None:
             self._execute_("SELECT * FROM agreements")
         else:
-            self._execute_("SELECT * FROM agreements WHERE id={}".format(index))
+            self._execute_("SELECT * FROM {} WHERE id={}".format(AGREEMENTS_TABLE_NAME, index))
         return self.cursor.fetchall()
 
     def set_property(self, fields, index):
@@ -86,19 +86,20 @@ class Database:
     def remove_properties(self, ids=None, agreement_ids=None):
         if ids is not None:
             for row_id in ids:
-                if not self._execute_("DELETE FROM properties WHERE id={};".format(row_id)):
+                if not self._execute_("DELETE FROM {} WHERE id={};".format(PROPERTIES_TABLE_NAME, row_id)):
                     return False
         if agreement_ids is not None:
             for agreement_id in agreement_ids:
-                if not self._execute_("DELETE FROM properties WHERE agreement_id={};".format(agreement_id)):
+                if not self._execute_("DELETE FROM {} WHERE agreement_id={};".format(PROPERTIES_TABLE_NAME,
+                                                                                     agreement_id)):
                     return False
         return True
 
     def get_properties(self, agreement_id=None, index=None):
         if index is not None and agreement_id is None:
-            self._execute_("SELECT * FROM properties WHERE id = {}".format(index))
+            self._execute_("SELECT * FROM {} WHERE id = {}".format(PROPERTIES_TABLE_NAME, index))
         elif agreement_id is not None and index is None:
-            self._execute_("SELECT * FROM properties WHERE agreement_id = {}".format(agreement_id))
+            self._execute_("SELECT * FROM {} WHERE agreement_id = {}".format(PROPERTIES_TABLE_NAME, agreement_id))
         elif agreement_id is None and index is None:
             self._execute_("SELECT * FROM properties")
         else:
