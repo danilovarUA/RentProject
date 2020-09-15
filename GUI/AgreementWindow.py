@@ -21,18 +21,10 @@ class AgreementWidget(QWidget):
         self.app = app
         self.database = database
         self.property_window = None
-
         self.agreement_id = agreement_id
-
         self.setWindowTitle(Text.add_agreement)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
-
-        self.main_layout = QGridLayout()
-        self.fields_layout = QGridLayout()
-        self.properties_table_layout = QGridLayout()
-        self.properties_table_controls_and_stats_layout = QGridLayout()
-        self.page_control_layout = QGridLayout()
 
         self.entry_company = LineEntry()
         self.entry_person = LineEntry()
@@ -42,73 +34,64 @@ class AgreementWidget(QWidget):
         self.entry_last_month = LineEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
-        self.properties_table = Table(Text.properties_table,
-                                      table_doubleclick_handler=self.property_select_handler)
-
-        self.main_layout.addLayout(self.fields_layout, 0, 0)
-        self.main_layout.addLayout(self.properties_table_layout, 1, 0)
-        self.main_layout.addLayout(self.properties_table_controls_and_stats_layout, 2, 0)
-        self.main_layout.addLayout(self.page_control_layout, 3, 0)
-
-        self.setup_fields_layout()
-        self.setup_properties_table_layout()
-        self.setup_properties_table_controls_and_stats_layout()
-        self.setup_page_control_layout()
-
-        self.setLayout(self.main_layout)
-
+        self.table = Table(Text.properties_table,
+                           table_doubleclick_handler=self.handler_doubleclick_table)
+        self.setLayout(self.setup_layout())
         if agreement_id != -1:
             self.fill_in_fields()
 
         self.show()
 
-    def setup_fields_layout(self):
+    def setup_layout(self):
+        layout_main = QGridLayout()
+        layout_fields = QGridLayout()
+        layout_table = QGridLayout()
+        layout_table_controls = QGridLayout()
+        layout_control = QGridLayout()
+        layout_main.addLayout(layout_fields, 0, 0)
+        layout_main.addLayout(layout_table, 1, 0)
+        layout_main.addLayout(layout_table_controls, 2, 0)
+        layout_main.addLayout(layout_control, 3, 0)
+
         index = 0
-        for row in [(Text.company, self.entry_company),
-                    (Text.person, self.entry_person),
-                    (Text.recovery, self.entry_recovery),
-                    (Text.last_accept_day, self.entry_last_accept_day),
-                    (Text.first_payment, self.entry_first_month),
-                    (Text.last_payment, self.entry_last_month),
-                    (Text.agreement_start, self.entry_start_day),
-                    (Text.agreement_end, self.entry_end_day), ]:
-            self.fields_layout.addWidget(Label(row[0]), index, 0)
-            self.fields_layout.addWidget(row[1], index, 1)
+        for row in [(Text.company, self.entry_company), (Text.person, self.entry_person),
+                    (Text.recovery, self.entry_recovery), (Text.last_accept_day, self.entry_last_accept_day),
+                    (Text.first_payment, self.entry_first_month), (Text.last_payment, self.entry_last_month),
+                    (Text.agreement_start, self.entry_start_day), (Text.agreement_end, self.entry_end_day)]:
+            layout_fields.addWidget(Label(row[0]), index, 0)
+            layout_fields.addWidget(row[1], index, 1)
             index += 1
 
-    def setup_properties_table_layout(self):
-        self.properties_table_layout.addWidget(self.properties_table, 0, 0)
-        self.fill_in_properties_table()
+        layout_table.addWidget(self.table, 0, 0)
+        self.fill_in_table()
 
-    def fill_in_properties_table(self):
-        self.properties_table.clean()
+        button_add_property = Button(Text.add_property)
+        button_remove_property = Button(Text.remove_properties)
+        button_add_property.clicked.connect(self.handler_click_add_property)
+        button_remove_property.clicked.connect(self.handler_click_remove_properties)
+        layout_table_controls.addWidget(button_add_property, 0, 0)
+        layout_table_controls.addWidget(button_remove_property, 0, 1)
+
+        button_done = Button(Text.save)
+        button_close = Button(Text.cancel)
+        button_done.clicked.connect(self.handler_click_done)
+        button_close.clicked.connect(self.close)
+        layout_control.addWidget(button_close, 0, 1)
+        layout_control.addWidget(button_done, 0, 0)
+
+        return layout_main
+
+    def fill_in_table(self):
+        self.table.clean()
         rows = self.database.get_properties(agreement_id=self.agreement_id)
         for row_index in range(len(rows)):
             row = rows[row_index]
-            self.properties_table.add_row(row[0], [row[1], row[2], row[3], row[4]])
+            self.table.add_row(row[0], [row[1], row[2], row[3], row[4]])
 
-    def setup_properties_table_controls_and_stats_layout(self):
-        add_property_button = Button(Text.add_property)
-        add_property_button.clicked.connect(self.add_property_clicked)
-        self.properties_table_controls_and_stats_layout.addWidget(
-            add_property_button, 0, 0)
-
-        remove_properties_button = Button(Text.remove_properties)
-        remove_properties_button.clicked.connect(self.remove_properties_clicked)
-        self.properties_table_controls_and_stats_layout.addWidget(remove_properties_button, 0, 1)
-
-    def add_property_clicked(self):
+    def handler_click_add_property(self):
         self.property_window = PropertyWidget(self.app, self.database, self)
 
-    def setup_page_control_layout(self):
-        done_button = Button(Text.save)
-        done_button.clicked.connect(self.done_clicked)
-        self.page_control_layout.addWidget(done_button, 0, 0)
-        close_button = Button(Text.cancel)
-        close_button.clicked.connect(self.close)
-        self.page_control_layout.addWidget(close_button, 0, 1)
-
-    def done_clicked(self):
+    def handler_click_done(self):
         data = {"company": self.entry_company.text(),
                 "person": self.entry_person.text(),
                 "recovery_price": self.entry_recovery.text(),
@@ -120,6 +103,7 @@ class AgreementWidget(QWidget):
         result = self.database.set_agreement(data, self.agreement_id)
         if not result:
             Popup("Some fields were not validated", "Error")
+            # TODO translate them all
         else:
             if not self.database.assign_properties():
                 Popup("Something went wrong when adding properties", "Error")
@@ -131,30 +115,30 @@ class AgreementWidget(QWidget):
         if len(rows) <= 0:
             # TODO popup and close window
             raise ValueError("Something went wrong - there is no agreement like that")
-        agreement_fields = rows[0]
-        self.entry_company.setText(str(agreement_fields[1]))
-        self.entry_person.setText(str(agreement_fields[2]))
-        self.entry_recovery.setText(str(agreement_fields[3]))
-        self.entry_last_accept_day.setDate(QDate.fromString(agreement_fields[4], 'dd-MM-yyyy'))
-        self.entry_first_month.setText(str(agreement_fields[5]))
-        self.entry_last_month.setText(str(agreement_fields[6]))
-        self.entry_start_day.setDate(QDate.fromString(agreement_fields[7], 'dd-MM-yyyy'))
-        self.entry_end_day.setDate(QDate.fromString(agreement_fields[8], 'dd-MM-yyyy'))
+        fields = rows[0]
+        self.entry_company.setText(str(fields[1]))
+        self.entry_person.setText(str(fields[2]))
+        self.entry_recovery.setText(str(fields[3]))
+        self.entry_last_accept_day.setDate(QDate.fromString(fields[4], 'dd-MM-yyyy'))
+        self.entry_first_month.setText(str(fields[5]))
+        self.entry_last_month.setText(str(fields[6]))
+        self.entry_start_day.setDate(QDate.fromString(fields[7], 'dd-MM-yyyy'))
+        self.entry_end_day.setDate(QDate.fromString(fields[8], 'dd-MM-yyyy'))
 
-    def property_select_handler(self, event):
-        index = self.properties_table.item(event.row(), 0).row_id
+    def handler_doubleclick_table(self, event):
+        index = self.table.item(event.row(), 0).row_id
         print(event.row())
         self.property_window = PropertyWidget(self.app, self.database, self, index)
 
     def closeEvent(self, close_event=None):
         self.database.remove_agreements([-1])
 
-    def remove_properties_clicked(self):
+    def handler_click_remove_properties(self):
         properties_to_delete = []
-        for index in range(self.properties_table.rowCount()):
-            if self.properties_table.item(index, 0).checkState() == Qt.Checked:
-                properties_to_delete.append(self.properties_table.item(index, 0).row_id)
+        for index in range(self.table.rowCount()):
+            if self.table.item(index, 0).checkState() == Qt.Checked:
+                properties_to_delete.append(self.table.item(index, 0).row_id)
         if len(properties_to_delete) == 0:
             Popup("No selected properties to delete.", "Error")
         self.database.remove_properties(ids=properties_to_delete)
-        self.fill_in_properties_table()
+        self.fill_in_table()
