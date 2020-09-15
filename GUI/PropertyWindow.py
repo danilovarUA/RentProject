@@ -71,11 +71,10 @@ class PropertyWidget(QWidget):
         self.close()
 
     def fill_in_fields(self):
-        print(self.property_index)
         rows = self.database.get_properties(index=self.property_index)
         if len(rows) <= 0:
-            # TODO popup and close window
-            raise ValueError("Something went wrong - there is no property like that")
+            self.close()
+            Popup("Something went wrong - there is no property like that", "Error")
         fields = rows[0]
         self.entry_name.setText(str(fields[1]))
         self.entry_address.setText(str(fields[2]))

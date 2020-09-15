@@ -2,7 +2,7 @@ import sqlite3
 
 DATABASE_NAME = 'rentDatabase.sqlite'
 AGREEMENTS_TABLE_NAME = "agreements"
-PROPERTIES_TABLE_NAME = "properties"  # TODO use these only
+PROPERTIES_TABLE_NAME = "properties"
 
 
 class Database:
