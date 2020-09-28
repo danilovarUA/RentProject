@@ -111,15 +111,15 @@ class Database:
 
 
 def validate_string(value, max_length=1000):
-    return isinstance(value, str) and len(value) <= max_length
+    return isinstance(value, str) and len(value) in range(1, max_length+1)
 
 
 def validate_number(value):
-    return isinstance(value, str) and value.isnumeric()
+    return validate_string(value) and value.isnumeric()
 
 
 def validate_date(value):
-    if not isinstance(value, str):
+    if not validate_string(value):
         return False
     day, month, year = value.split("/")
     return (day.isnumeric() and len(day) <= 2 and day in range(0, 32)
