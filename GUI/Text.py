@@ -23,6 +23,7 @@ name = "Название"
 address = "Адресс"
 area = "Площадь"
 given_day = "Передан арендатору"
+error = "Ошибка"
 
 agreements_table = [("", 0),
                     (company, 300),
@@ -40,3 +41,7 @@ properties_table = [("", 0),
                     (given_day, 200),
                     ]
 
+error_selection_missing = "Отметьте то, что вы хотите удалить."
+error_invalid_input = "Некоторая информация не приемлема."
+error_adding_data = "Не получилось добавить данные."
+error_non_existent_data = "Таких данных не существует."

@@ -53,7 +53,10 @@ class PropertyWidget(QWidget):
         button_done = Button(Text.save)
         button_done.clicked.connect(self.handler_click_done)
         layout_control.addWidget(button_done, 0, 0)
-        layout_control.addWidget(Button(Text.cancel), 0, 1)
+
+        button_cancel = Button(Text.cancel)
+        button_cancel.clicked.connect(self.close)
+        layout_control.addWidget(button_cancel, 0, 1)
 
         return layout_main
 
@@ -66,7 +69,7 @@ class PropertyWidget(QWidget):
              }
         result = self.database.set_property(data, self.property_index)
         if not result:
-            Popup("Some fields were not validated", "Error")
+            Popup(Text.error_invalid_input, Text.error)
         self.agreements_window.fill_in_table()
         self.close()
 
@@ -74,7 +77,7 @@ class PropertyWidget(QWidget):
         rows = self.database.get_properties(index=self.property_index)
         if len(rows) <= 0:
             self.close()
-            Popup("Something went wrong - there is no property like that", "Error")
+            Popup(Text.error_non_existent_data, Text.error)
             return
         fields = rows[0]
         self.entry_name.setText(str(fields[1]))
