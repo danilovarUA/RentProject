@@ -6,6 +6,7 @@ from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
+from GUI.Templates.Checkbox import Checkbox
 from GUI.PropertyWindow import PropertyWidget
 from GUI import Text
 
@@ -31,7 +32,7 @@ class AgreementWidget(QWidget):
         self.entry_recovery = LineEntry()
         self.entry_last_accept_day = DateEntry()
         self.entry_first_month = LineEntry()
-        self.entry_last_month = LineEntry()
+        self.entry_last_month = Checkbox("")
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
         self.table = Table(Text.properties_table,
@@ -115,6 +116,7 @@ class AgreementWidget(QWidget):
         if len(rows) <= 0:
             self.close()
             Popup("Something went wrong - there is no property like that", "Error")
+            return
         fields = rows[0]
         self.entry_company.setText(str(fields[1]))
         self.entry_person.setText(str(fields[2]))

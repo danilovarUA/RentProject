@@ -20,7 +20,7 @@ class PropertyWidget(QWidget):
         self.agreements_window = agreements_window
         self.property_index = property_index
         self.agreement_id = agreements_window.agreement_id
-        self.setWindowTitle(Text.add_agreement)
+        self.setWindowTitle(Text.add_property)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
         self.entry_name = LineEntry()
@@ -75,6 +75,7 @@ class PropertyWidget(QWidget):
         if len(rows) <= 0:
             self.close()
             Popup("Something went wrong - there is no property like that", "Error")
+            return
         fields = rows[0]
         self.entry_name.setText(str(fields[1]))
         self.entry_address.setText(str(fields[2]))

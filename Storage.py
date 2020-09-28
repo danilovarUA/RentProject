@@ -20,7 +20,7 @@ class Database:
         if index == -1:
             query = ("INSERT INTO {}(company, person, recovery_price, last_accept_day, ".format(AGREEMENTS_TABLE_NAME) +
                      "first_payment, last_same_payment, start_day, end_day) " +
-                     "VALUES ({}, {}, {}, {}, {}, {}, {}, {})".format(
+                     "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')".format(
                          fields["company"], fields["person"], fields["recovery_price"], fields["last_accept_day"],
                          fields["first_payment"], fields["last_same_payment"], fields["start_day"], fields["end_day"]))
         else:

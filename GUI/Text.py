@@ -30,7 +30,8 @@ agreements_table = [("", 0),
                     (last_accept_day, 200),
                     (agreement_end, 200),
                     ("Количество собственности", 100),
-                    ("Общая площадь", 100)]
+                    ("Общая площадь", 100)] # days to the end
+# properties not passed  # TODO do tha5 instead of problems
 
 properties_table = [("", 0),
                     (name, 300),
