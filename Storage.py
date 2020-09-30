@@ -3,6 +3,7 @@ import sqlite3
 DATABASE_NAME = 'rentDatabase.sqlite'
 AGREEMENTS_TABLE_NAME = "agreements"
 PROPERTIES_TABLE_NAME = "properties"
+MAX_STRING_LENGTH = 1000
 
 
 class Database:
@@ -64,11 +65,13 @@ class Database:
         return self.cursor.fetchall()
 
     def set_property(self, fields, index):
-        if not (validate_string(fields["name"]) or validate_string(fields["address"]) or
-                validate_number(fields["area"]) or validate_date(fields["given_day"]) or
+        if not (validate_string(fields["name"]) and validate_string(fields["address"]) and
+                validate_number(fields["area"]) and validate_date(fields["given_day"]) and
                 validate_number(fields["agreement_id"])):
             return False
-
+        if not fields["given"]:
+            fields["given_day"] = None
+        print(fields)
         if index == -1:
             query = ("INSERT INTO {}(name, address, area, given_day, agreement_id)".format(PROPERTIES_TABLE_NAME) +
                      "VALUES ('{}', '{}', '{}', '{}', '{}')".format(
@@ -110,18 +113,26 @@ class Database:
         self.connection.close()
 
 
-def validate_string(value, max_length=1000):
+def validate_string(value, max_length=MAX_STRING_LENGTH):
     return isinstance(value, str) and len(value) in range(1, max_length+1)
 
 
 def validate_number(value):
-    return validate_string(value) and value.isnumeric()
+    return isinstance(value, int) or (validate_string(value) and value.isnumeric())
 
 
 def validate_date(value):
     if not validate_string(value):
         return False
     day, month, year = value.split("/")
-    return (day.isnumeric() and len(day) <= 2 and day in range(0, 32)
-            and month.isnumeric() and len(month) <= 2 and month in range(0, 13)
+    if not (day.isnumeric() and int(day) in range(0, 32)
+            and month.isnumeric() and int(month) in range(0, 13)
+            and year.isnumeric() and len(year) == 4):
+        print("{} is not a date".format(value))
+    return (day.isnumeric() and int(day) in range(0, 32)
+            and month.isnumeric() and int(month) in range(0, 13)
             and year.isnumeric() and len(year) == 4)
+
+
+if __name__ == "__main__":
+    print(validate_date("30/09/2021"))

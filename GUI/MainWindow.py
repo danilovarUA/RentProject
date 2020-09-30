@@ -80,7 +80,7 @@ class MainWidget(QWidget):
 
         for row_property in rows_properties:
             agreement_id = row_property[5]
-            area = row_property[3]
+            area = int(row_property[3])
             given = True  # TODO how am I suppose to get that?
 
             if agreement_id in max_properties_by_agreement:

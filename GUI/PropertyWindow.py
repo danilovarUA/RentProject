@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import QGridLayout, QWidget
-from PyQt5.QtCore import QDate
+from PyQt5.QtCore import QDate, Qt
 from GUI.Templates.Button import Button
 from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
+from GUI.Templates.Checkbox import Checkbox
 from GUI import Text
 
 
@@ -26,6 +27,7 @@ class PropertyWidget(QWidget):
         self.entry_name = LineEntry()
         self.entry_address = LineEntry()
         self.entry_area = LineEntry()
+        self.checkbox_given = Checkbox(click_handler=self.handler_click_checkbox)
         self.entry_given_day = DateEntry()
         self.setLayout(self.setup_layout())
 
@@ -45,10 +47,14 @@ class PropertyWidget(QWidget):
         for row in [(Text.name, self.entry_name),
                     (Text.address, self.entry_address),
                     (Text.area, self.entry_area),
-                    (Text.given_day, self.entry_given_day), ]:
+                    (Text.given_day, self.checkbox_given),
+                    (Text.given_day, self.entry_given_day)]:
             layout_fields.addWidget(Label(row[0]), index, 0)
             layout_fields.addWidget(row[1], index, 1)
             index += 1
+
+        self.checkbox_given.setCheckState(Qt.Unchecked)
+        self.entry_given_day.setEnabled(False)
 
         button_done = Button(Text.save)
         button_done.clicked.connect(self.handler_click_done)
@@ -65,6 +71,7 @@ class PropertyWidget(QWidget):
                 "address": self.entry_address.text(),
                 "area": self.entry_area.text(),
                 "given_day": self.entry_given_day.text(),
+                "given": self.checkbox_given.checkState() == Qt.Checked,
                 "agreement_id": self.agreement_id
              }
         result = self.database.set_property(data, self.property_index)
@@ -72,6 +79,12 @@ class PropertyWidget(QWidget):
             Popup(Text.error_invalid_input, Text.error)
         self.agreements_window.fill_in_table()
         self.close()
+
+    def handler_click_checkbox(self):
+        if self.checkbox_given.checkState() == Qt.Checked:
+            self.entry_given_day.setEnabled(True)
+        else:
+            self.entry_given_day.setEnabled(False)
 
     def fill_in_fields(self):
         rows = self.database.get_properties(index=self.property_index)
