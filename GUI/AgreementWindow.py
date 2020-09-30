@@ -3,12 +3,13 @@ from PyQt5.QtCore import QDate, Qt
 from GUI.Templates.Button import Button
 from GUI.Templates.Table import Table
 from GUI.Templates.Label import Label
-from GUI.Templates.LineEntry import LineEntry
+from GUI.Templates.TextEntry import TextEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
 from GUI.Templates.Checkbox import Checkbox
 from GUI.PropertyWindow import PropertyWidget
 from GUI.Templates.Line import VLine
+from GUI.Templates.NumberEntry import NumberEntry
 from GUI import Text
 
 
@@ -28,26 +29,26 @@ class AgreementWidget(QWidget):
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
 
-        self.entry_company = LineEntry()
-        self.entry_person = LineEntry()
-        self.entry_recovery = LineEntry()
+        self.entry_company = TextEntry()
+        self.entry_person = TextEntry()
+        self.entry_recovery = NumberEntry(min_value=0)
         self.entry_last_accept_day = DateEntry()
-        self.entry_monthly_price = LineEntry()
+        self.entry_monthly_price = TextEntry()
         self.entry_last_month_prepay = Checkbox()
-        self.entry_pay_before_day = LineEntry()
-        self.entry_first_payment_price = LineEntry()
-        self.entry_second_payment_price = LineEntry()
-        self.entry_first_payment_day = LineEntry()
-        self.entry_second_payment_day = LineEntry()
-        self.entry_first_stop_day = LineEntry()
-        self.entry_second_stop_day = LineEntry()
+        self.entry_pay_before_day = NumberEntry(min_value=1, step=31, value=10)
+        self.entry_first_payment_price = NumberEntry(min_value=0)
+        self.entry_second_payment_price = NumberEntry(min_value=0)
+        self.entry_first_payment_day = DateEntry()
+        self.entry_second_payment_day = DateEntry()
+        self.entry_first_stop_day = DateEntry()
+        self.entry_second_stop_day = DateEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
-        self.entry_edrpou = LineEntry()
-        self.entry_address = LineEntry()
-        self.entry_ipn = LineEntry()
-        self.entry_iban = LineEntry()
-        self.entry_swift = LineEntry()
+        self.entry_edrpou = TextEntry()
+        self.entry_address = TextEntry()
+        self.entry_ipn = TextEntry()
+        self.entry_iban = TextEntry()
+        self.entry_swift = TextEntry()
         self.table = Table(Text.properties_table,
                            table_doubleclick_handler=self.handler_doubleclick_table)
         self.setLayout(self.setup_layout())

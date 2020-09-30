@@ -2,10 +2,11 @@ from PyQt5.QtWidgets import QGridLayout, QWidget
 from PyQt5.QtCore import QDate, Qt
 from GUI.Templates.Button import Button
 from GUI.Templates.Label import Label
-from GUI.Templates.LineEntry import LineEntry
+from GUI.Templates.TextEntry import TextEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
 from GUI.Templates.Checkbox import Checkbox
+from GUI.Templates.NumberEntry import NumberEntry
 from GUI import Text
 
 
@@ -24,9 +25,9 @@ class PropertyWidget(QWidget):
         self.setWindowTitle(Text.add_property)
         self.resize(int(app.primaryScreen().size().width() * SIZE_MODIFIER),
                     int(app.primaryScreen().size().height() * SIZE_MODIFIER))
-        self.entry_name = LineEntry()
-        self.entry_address = LineEntry()
-        self.entry_area = LineEntry()
+        self.entry_name = TextEntry()
+        self.entry_address = TextEntry()
+        self.entry_area = NumberEntry()
         self.checkbox_given = Checkbox(click_handler=self.handler_click_checkbox)
         self.entry_given_day = DateEntry()
         self.setLayout(self.setup_layout())
