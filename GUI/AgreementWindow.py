@@ -8,6 +8,7 @@ from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
 from GUI.Templates.Checkbox import Checkbox
 from GUI.PropertyWindow import PropertyWidget
+from GUI.Templates.Line import VLine
 from GUI import Text
 
 
@@ -31,10 +32,22 @@ class AgreementWidget(QWidget):
         self.entry_person = LineEntry()
         self.entry_recovery = LineEntry()
         self.entry_last_accept_day = DateEntry()
-        self.entry_first_month = LineEntry()
-        self.entry_last_month = Checkbox()
+        self.entry_monthly_price = LineEntry()
+        self.entry_last_month_prepay = Checkbox()
+        self.entry_pay_before_day = LineEntry()
+        self.entry_first_payment_price = LineEntry()
+        self.entry_second_payment_price = LineEntry()
+        self.entry_first_payment_day = LineEntry()
+        self.entry_second_payment_day = LineEntry()
+        self.entry_first_stop_day = LineEntry()
+        self.entry_second_stop_day = LineEntry()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
+        self.entry_edrpou = LineEntry()
+        self.entry_address = LineEntry()
+        self.entry_ipn = LineEntry()
+        self.entry_iban = LineEntry()
+        self.entry_swift = LineEntry()
         self.table = Table(Text.properties_table,
                            table_doubleclick_handler=self.handler_doubleclick_table)
         self.setLayout(self.setup_layout())
@@ -46,21 +59,47 @@ class AgreementWidget(QWidget):
     def setup_layout(self):
         layout_main = QGridLayout()
         layout_fields = QGridLayout()
+        layout_fields_column1 = QGridLayout()
+        layout_fields_column2 = QGridLayout()
         layout_table = QGridLayout()
         layout_table_controls = QGridLayout()
         layout_control = QGridLayout()
+        layout_fields.addLayout(layout_fields_column1, 0, 0)
+        layout_fields.addWidget(VLine(), 0, 1)
+        layout_fields.addLayout(layout_fields_column2, 0, 2)
         layout_main.addLayout(layout_fields, 0, 0)
         layout_main.addLayout(layout_table, 1, 0)
         layout_main.addLayout(layout_table_controls, 2, 0)
         layout_main.addLayout(layout_control, 3, 0)
 
         index = 0
-        for row in [(Text.company, self.entry_company), (Text.person, self.entry_person),
-                    (Text.recovery, self.entry_recovery), (Text.last_accept_day, self.entry_last_accept_day),
-                    (Text.first_payment, self.entry_first_month), (Text.last_payment, self.entry_last_month),
-                    (Text.agreement_start, self.entry_start_day), (Text.agreement_end, self.entry_end_day)]:
-            layout_fields.addWidget(Label(row[0]), index, 0)
-            layout_fields.addWidget(row[1], index, 1)
+        for row in [(Text.company, self.entry_company),
+                    (Text.person, self.entry_person),
+                    (Text.recovery, self.entry_recovery),
+                    (Text.last_accept_day, self.entry_last_accept_day),
+                    (Text.monthly_payment, self.entry_monthly_price),
+                    (Text.last_month_prepay, self.entry_last_month_prepay),
+                    (Text.agreement_start, self.entry_start_day),
+                    (Text.agreement_end, self.entry_end_day),
+                    (Text.pay_before_day, self.entry_pay_before_day),
+                    (Text.first_payment_price, self.entry_first_payment_price),
+                    ]:
+            layout_fields_column1.addWidget(Label(row[0]), index, 0)
+            layout_fields_column1.addWidget(row[1], index, 1)
+            index += 1
+        index = 0
+        for row in [(Text.second_payment_price, self.entry_second_payment_price),
+                (Text.first_payment_day, self.entry_first_payment_day),
+                (Text.second_payment_day, self.entry_second_payment_day),
+                (Text.first_stop_day, self.entry_first_stop_day),
+                (Text.second_stop_day, self.entry_second_stop_day),
+                (Text.edrpou, self.entry_edrpou),
+                (Text.address, self.entry_address),
+                (Text.ipn, self.entry_ipn),
+                (Text.iban, self.entry_iban),
+                (Text.swift, self.entry_swift),]:
+            layout_fields_column2.addWidget(Label(row[0]), index, 3)
+            layout_fields_column2.addWidget(row[1], index, 4)
             index += 1
 
         layout_table.addWidget(self.table, 0, 0)
@@ -97,8 +136,8 @@ class AgreementWidget(QWidget):
                 "person": self.entry_person.text(),
                 "recovery_price": self.entry_recovery.text(),
                 "last_accept_day": self.entry_last_accept_day.text(),
-                "first_payment": self.entry_first_month.text(),
-                "last_same_payment": self.entry_last_month.text(),
+                "first_payment": self.entry_monthly_price.text(),
+                "last_same_payment": self.entry_last_month_prepay.text(),
                 "start_day": self.entry_start_day.text(),
                 "end_day": self.entry_end_day.text()}
         result = self.database.set_agreement(data, self.agreement_id)
@@ -121,8 +160,8 @@ class AgreementWidget(QWidget):
         self.entry_person.setText(str(fields[2]))
         self.entry_recovery.setText(str(fields[3]))
         self.entry_last_accept_day.setDate(QDate.fromString(fields[4], 'dd-MM-yyyy'))
-        self.entry_first_month.setText(str(fields[5]))
-        self.entry_last_month.setText(str(fields[6]))
+        self.entry_monthly_price.setText(str(fields[5]))
+        self.entry_last_month_prepay.setText(str(fields[6]))
         self.entry_start_day.setDate(QDate.fromString(fields[7], 'dd-MM-yyyy'))
         self.entry_end_day.setDate(QDate.fromString(fields[8], 'dd-MM-yyyy'))
 
