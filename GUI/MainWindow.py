@@ -73,34 +73,53 @@ class MainWidget(QWidget):
 
     def fill_in_table(self):
         rows_properties = self.database.get_properties()
-        amounts_by_agreement = {}
-        areas_by_agreement = {}
+        max_properties_by_agreement = {}
+        given_properties_by_agreement = {}
+        max_areas_by_agreement = {}
+        given_areas_by_agreement = {}
+
         for row_property in rows_properties:
-            # TODO differ given properties from ones which are not
             agreement_id = row_property[5]
             area = row_property[3]
-            if agreement_id in amounts_by_agreement:
-                amounts_by_agreement[agreement_id] += 1
+            given = True  # TODO how am I suppose to get that?
+
+            if agreement_id in max_properties_by_agreement:
+                max_properties_by_agreement[agreement_id] += 1
+                max_areas_by_agreement[agreement_id] += area
+                if given:
+                    given_properties_by_agreement[agreement_id] += 1
+                    given_areas_by_agreement[agreement_id] += area
+
             else:
-                amounts_by_agreement[agreement_id] = 1
-            if agreement_id in areas_by_agreement:
-                areas_by_agreement[agreement_id] += area
-            else:
-                areas_by_agreement[agreement_id] = area
+                max_properties_by_agreement[agreement_id] = 1
+                max_areas_by_agreement[agreement_id] = area
+                if given:
+                    given_properties_by_agreement[agreement_id] = 1
+                    given_areas_by_agreement[agreement_id] = area
+                else:
+                    given_properties_by_agreement[agreement_id] = 0
+                    given_areas_by_agreement[agreement_id] = 0
 
         self.table.clean()
         rows_agreements = self.database.get_agreements()
         for row_index in range(len(rows_agreements)):
             row = rows_agreements[row_index]
+            current_income = int(row[5]) * given_areas_by_agreement[row[0]] / max_areas_by_agreement[row[0]]
+            max_income = int(row[5])
+
             try:
-                amount = amounts_by_agreement[row[0]]
+                max_amount = max_properties_by_agreement[row[0]]
+                given_amount = given_properties_by_agreement[row[0]]
+                max_area = max_areas_by_agreement[row[0]]
+                given_area = given_areas_by_agreement[row[0]]
+
             except KeyError:
-                amount = 0
-            try:
-                area = areas_by_agreement[row[0]]
-            except KeyError:
-                area = 0
-            self.table.add_row(row[0], [row[1], row[2], row[4], row[8], amount, area])
+                max_amount = 0
+                given_amount = 0
+                max_area = 0
+                given_area = 0
+            self.table.add_row(row[0], [row[1], row[2], row[4], row[8], max_amount, given_amount, max_area, given_area,
+                                        max_income, current_income])
 
     def handler_click_select(self):
         self.table.set_all_checkboxes()
