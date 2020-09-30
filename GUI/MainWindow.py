@@ -137,6 +137,6 @@ class MainWidget(QWidget):
             if self.table.item(index, 0).checkState() == Qt.Checked:
                 agreements_to_delete.append(self.table.item(index, 0).row_id)
         if len(agreements_to_delete) == 0:
-            Popup("No selected contracts to delete.", "Error")
+            Popup(Text.error_selection_missing, Text.error)
         self.database.remove_agreements(agreements_to_delete)
         self.fill_in_table()

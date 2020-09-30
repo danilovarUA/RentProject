@@ -6,6 +6,7 @@ from GUI.Templates.Label import Label
 from GUI.Templates.LineEntry import LineEntry
 from GUI.Templates.DateEntry import DateEntry
 from GUI.Templates.Popup import Popup
+from GUI.Templates.Checkbox import Checkbox
 from GUI.PropertyWindow import PropertyWidget
 from GUI import Text
 
@@ -31,7 +32,7 @@ class AgreementWidget(QWidget):
         self.entry_recovery = LineEntry()
         self.entry_last_accept_day = DateEntry()
         self.entry_first_month = LineEntry()
-        self.entry_last_month = LineEntry()
+        self.entry_last_month = Checkbox()
         self.entry_start_day = DateEntry()
         self.entry_end_day = DateEntry()
         self.table = Table(Text.properties_table,
@@ -102,11 +103,10 @@ class AgreementWidget(QWidget):
                 "end_day": self.entry_end_day.text()}
         result = self.database.set_agreement(data, self.agreement_id)
         if not result:
-            Popup("Some fields were not validated", "Error")
-            # TODO translate them all
+            Popup(Text.error_invalid_input, Text.error)
         else:
             if not self.database.assign_properties():
-                Popup("Something went wrong when adding properties", "Error")
+                Popup(Text.error_adding_data, Text.error)
         self.main_window.fill_in_table()
         self.close()
 
@@ -114,7 +114,8 @@ class AgreementWidget(QWidget):
         rows = self.database.get_agreements(index=self.agreement_id)
         if len(rows) <= 0:
             self.close()
-            Popup("Something went wrong - there is no property like that", "Error")
+            Popup(Text.error_non_existent_data, Text.error)
+            return
         fields = rows[0]
         self.entry_company.setText(str(fields[1]))
         self.entry_person.setText(str(fields[2]))
@@ -139,6 +140,6 @@ class AgreementWidget(QWidget):
             if self.table.item(index, 0).checkState() == Qt.Checked:
                 properties_to_delete.append(self.table.item(index, 0).row_id)
         if len(properties_to_delete) == 0:
-            Popup("No selected properties to delete.", "Error")
+            Popup(Text.error_selection_missing, Text.error)
         self.database.remove_properties(ids=properties_to_delete)
         self.fill_in_table()
